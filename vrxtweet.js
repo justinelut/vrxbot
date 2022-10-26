@@ -8,6 +8,19 @@ import funnyAi from "./openai.js";
 import download from "image-downloader";
 const app = express();
 
+
+cron.schedule(
+  "*/60 * * * *",
+  () => {
+    funnyAi();
+  },
+  {
+    scheduled: true,
+    timezone: "Africa/Nairobi",
+  }
+);
+
+
 app.post("/share", (req, res) => {
   console.log("a post has been published");
   const api = new GhostContentAPI({
@@ -42,16 +55,8 @@ app.post("/share", (req, res) => {
   req.next();
 });
 
-cron.schedule(
-  "*/60 * * * *",
-  () => {
-    funnyAi();
-  },
-  {
-    scheduled: true,
-    timezone: "Africa/Nairobi",
-  }
-);
+
+
 
 app.listen(3004, () => {
   console.log("share app listening on port " + 3004);
