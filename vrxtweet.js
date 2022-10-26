@@ -2,7 +2,10 @@ import * as dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import GhostContentAPI from "@tryghost/content-api";
-import Tweet from "./tweet.js";
+import cron from "node-cron";
+import { TweetWithImage, Tweet } from "./tweet.js";
+import funnyAi from "./openai.js";
+import download from "image-downloader";
 const app = express();
 
 app.post("/share", (req, res) => {
@@ -17,10 +20,21 @@ app.post("/share", (req, res) => {
   api.posts
     .browse({ limit: 1 })
     .then((posts) => {
-      const shareUrl = posts[0].url;
+      console.log(posts[0]);
+      //const shareUrl = posts[0].url;
       const title = posts[0].title;
-      const tweet = title + " " + shareUrl;
-      Tweet(tweet);
+      const feature_image = posts[0].feature_image;
+      const tweet = title;
+      if (feature_image !== null) {
+        download
+          .image({ url: feature_image, dest: "/var/www/share/images" })
+          .then(({ filename }) => {
+            TweetWithImage(title, filename);
+          })
+          .catch((err) => console.error(err));
+      } else {
+        Tweet(tweet);
+      }
     })
     .catch((err) => {
       console.error(err);
@@ -28,6 +42,17 @@ app.post("/share", (req, res) => {
   req.next();
 });
 
-app.listen(3002, () => {
-  console.log("share app listening on port " + 3002);
+cron.schedule(
+  "*/60 * * * *",
+  () => {
+    funnyAi();
+  },
+  {
+    scheduled: true,
+    timezone: "Africa/Nairobi",
+  }
+);
+
+app.listen(3004, () => {
+  console.log("share app listening on port " + 3004);
 });

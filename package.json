@@ -5,14 +5,18 @@
   "author": "Justine Gichana",
   "type": "module",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon vrxtweet.js"
   },
   "license": "MIT",
   "dependencies": {
     "@tryghost/content-api": "^1.11.4",
+    "axios": "^1.1.3",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "image-downloader": "^4.3.0",
+    "node-cron": "^3.0.2",
     "nodemon": "^2.0.20",
+    "openai": "^3.0.1",
     "twitter-api-sdk": "^1.2.1",
     "twitter-api-v2": "^1.12.9"
   }
